@@ -1,0 +1,92 @@
+<!doctype html>
+<html>
+<head>
+
+  <link rel="stylesheet" href="./date-picker-style.css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
+  <script src="./angular-pickadate.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.20.1/moment.js"></script>
+    
+  <script type="text/javascript">
+  var myApp = angular.module('myApp', ['pickadate']);
+  myApp.controller('datePickerCtrl', ['$scope',function($scope) {
+   var vm = this;
+   var past = new Date();
+   past.setDate(past.getDate() - 90);
+   vm.minDate = moment(past).format('MM/DD/YYYY');
+   vm.toDate = moment().format('DD-MMM-YYYY');
+   vm.fromDate = moment(past).format('DD-MMM-YYYY');
+   vm.maxDate = moment().format('MM/DD/YYYY');
+   $scope.$watch( '$scope.dateRangeChecked', function(newValue, oldValue, scope) {
+      if ( newValue !== true ) {
+       vm.toDate = moment().format('DD-MMM-YYYY');
+       vm.fromDate = moment(past).format('DD-MMM-YYYY');
+       vm.displayToDate = moment().format('DD-MMM-YYYY');
+       vm.displayFromDate = moment(past).format('DD-MMM-YYYY');
+       vm.selectToday = false;
+
+      }
+    }, true);
+   $scope.$watchGroup(['vm.fromDate', 'vm.toDate'], function(newValues, oldValues, scope) {
+      var temp;
+      if (newValues[0] != oldValues[0]) {
+        vm.newMinDate = moment(vm.fromDate, ['DD-MMM-YYYY', 'MM/DD/YYYY']).format('MM/DD/YYYY');
+      }
+    });
+
+     $scope.formatDateToDisplay = function (date, flag) {
+        if( flag ) {
+         vm.toDate = moment(vm.maxDate,  ['DD-MMM-YYYY', 'MM/DD/YYYY']).format('DD-MMM-YYYY');
+        }
+      };
+
+  }]);
+  </script>
+  <script src="./date-picker-directive.js"></script>
+
+</head>
+<body ng-app="myApp">
+   <main class="container" ng-controller="datePickerCtrl as vm">
+      <h1 class="body-font"> Directive: date-picker </h1>
+     <div class="top-margin2-xs created-between">
+            <label class="checkbox col-sm-2 created-between__label">
+                <input class="checkbox-input" type="checkbox" name="checkboxName" ng-model="vm.dateRangeChecked">
+                <span class="checkbox-text">Created between</span>
+            </label>
+            <span ng-if="vm.dateRangeChecked">
+                <date-picker 
+                    display-date="vm.fromDate" 
+                    max-date="vm.maxDate" 
+                    min-date="vm.minDate" 
+                    format="DD-MMM-YYYY"
+                    date-range-checked="vm.dateRangeChecked">
+                </date-picker>
+            </span>
+            <input class="input-addon-input created-between__input" type="text" ng-if="! vm.dateRangeChecked" ng-disabled="true" value="{{vm.displayFromDate}}" />
+            <!-- <label class="quote-queue__created-between-and ">
+                <span class="checkbox-text created-between__text-mid">and</span>
+            </label> -->
+            <span ng-if="vm.dateRangeChecked">
+                <date-picker ng-if="! vm.selectToday"
+                    display-date="vm.toDate" 
+                    max-date="vm.maxDate" 
+                    min-date="vm.newMinDate" 
+                    format="DD-MMM-YYYY"
+                    date-range-checked="vm.dateRangeChecked">
+                </date-picker>
+            </span>
+            <input class="input-addon-input created-between__input" type="text" ng-if="! vm.dateRangeChecked" ng-disabled="true" value="{{vm.displayToDate}}" />
+            <label class="" ng-if="vm.dateRangeChecked">
+                <input class="checkbox-input" type="checkbox" name="checkboxName" ng-model="vm.selectToday" ng-click="vm.formatDateToDisplay(vm.toDate, vm.selectToday)">
+                <span class="checkbox-text">Today</span>
+            </label>
+        </div>
+   </main>
+
+</body>
+</html>
