@@ -1,0 +1,15 @@
+<div class="date-picker col-md-3">
+	<div class="input-addon input-addon-block">
+		<label class="input-addon-label">
+			<input  class="input-addon-input date-picker__input" type="text" name="date" ng-model="vm.displayDate" ng-blur="vm.validateDate()">
+			<span class="icon icon-calendar date-picker__calendar" ng-click="vm.togglePicker()"></span>
+		</label>
+	</div>
+	 
+	<div class="date-picker-box">
+		<div pickadate date-range-checked="vm.dateRangeChecked" min-date="vm.minDate" max-date="vm.maxDate" toggle-picker="vm.togglePicker" ng-model="vm.date" format="MM/dd/yyyy"></div>
+	</div>
+</div>
+
+
+  
